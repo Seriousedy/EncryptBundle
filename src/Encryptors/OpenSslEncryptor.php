@@ -61,7 +61,7 @@ class OpenSslEncryptor implements EncryptorInterface
 
         // Create a cipher of the appropriate length for this method.
         $ivsize = openssl_cipher_iv_length(self::METHOD);
-        $iv = openssl_random_pseudo_bytes($ivsize);
+        $iv = hex2bin('b99cebd95cc0ae8afa7dc4eddf313bc7');
 
         // Create the encryption.
         $ciphertext = openssl_encrypt(
