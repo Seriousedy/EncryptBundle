@@ -1,5 +1,5 @@
 {
-    "name" : "seriousedy/encrypt-bundle",
+    "name" : "specshaper/encrypt-bundle",
     "type" : "symfony-bundle",
     "description" : "Bundle provides a service for encrypting values via attribute.",
     "homepage": "https://github.com/seriousedy/EncryptBundle",
