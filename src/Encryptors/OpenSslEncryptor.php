@@ -15,7 +15,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class OpenSslEncryptor implements EncryptorInterface
 {
-    public const METHOD = 'aes-256-cbc';
+    public const METHOD = 'aes-128-ecb';
 
     /**
      * Secret key stored in the .env file and passed via parameters in the Encryptor Factory.
@@ -59,21 +59,16 @@ class OpenSslEncryptor implements EncryptorInterface
 
         $key = $this->getSecretKey();
 
-        // Create a cipher of the appropriate length for this method.
-        $ivsize = openssl_cipher_iv_length(self::METHOD);
-        $iv = hex2bin('b99cebd95cc0ae8afa7dc4eddf313bc7');
-
         // Create the encryption.
         $ciphertext = openssl_encrypt(
             $data,
             self::METHOD,
             $key,
-            OPENSSL_RAW_DATA,
-            $iv
+            OPENSSL_RAW_DATA
         );
 
         // Prefix the encoded text with the iv and encode it to base 64. Append the encoded suffix.
-        return base64_encode($iv.$ciphertext).DoctrineEncryptSubscriberInterface::ENCRYPTED_SUFFIX;
+        return base64_encode($ciphertext).DoctrineEncryptSubscriberInterface::ENCRYPTED_SUFFIX;
     }
 
     /**
@@ -102,16 +97,11 @@ class OpenSslEncryptor implements EncryptorInterface
 
         $data = base64_decode($data);
 
-        $ivsize = openssl_cipher_iv_length(self::METHOD);
-        $iv = mb_substr($data, 0, $ivsize, '8bit');
-        $ciphertext = mb_substr($data, $ivsize, null, '8bit');
-
         return openssl_decrypt(
-            $ciphertext,
+            $data,
             self::METHOD,
             $key,
-            OPENSSL_RAW_DATA,
-            $iv
+            OPENSSL_RAW_DATA
         );
     }
 
@@ -119,7 +109,7 @@ class OpenSslEncryptor implements EncryptorInterface
      * Get the secret key.
      *
      * Decode the parameters file base64 key.
-     * Check that the key is 256 bit.
+     * Check that the key is 128 bit.
      *
      * @throws \Exception
      */
@@ -146,8 +136,8 @@ class OpenSslEncryptor implements EncryptorInterface
 
         $keyLengthOctet = mb_strlen($key, '8bit');
 
-        if (32 !== $keyLengthOctet) {
-            throw new \Exception("Needs a 256-bit key, '".($keyLengthOctet * 8)."'bit given!");
+        if (16 !== $keyLengthOctet) {
+            throw new \Exception("Needs a 128-bit key, '".($keyLengthOctet * 8)."'bit given!");
         }
 
         return $key;
