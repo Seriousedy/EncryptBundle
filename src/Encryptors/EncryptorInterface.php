@@ -9,6 +9,8 @@ interface EncryptorInterface
 {
     public function setSecretKey(string $key): void;
 
+    public function getSecretKey(string $key): ?string;
+
     /**
      * Must accept data and return encrypted data.
      *
