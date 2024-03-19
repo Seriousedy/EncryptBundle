@@ -113,7 +113,7 @@ class OpenSslEncryptor implements EncryptorInterface
      *
      * @throws \Exception
      */
-    private function getSecretKey(): string
+    public function getSecretKey(): string
     {
         // Throw an event to allow encryption keys to be defined during runtime.
         $getKeyEvent = new EncryptKeyEvent();
